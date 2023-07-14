@@ -4,12 +4,6 @@ import numpy as np
 import json
 
 
-# if __name__ == '__main__':
-#     img = cv2.imread('enhanced/img_2.png', 0)				# read the input image --> You can enhance the fingerprint image using the "fingerprint_enhancer" library
-#     #FeaturesTerminations, FeaturesBifurcations = fingerprint_feature_extractor.extract_minutiae_features(img, spuriousMinutiaeThresh=10, invertImage = False, showResult=True, saveResult = True)
-#     FeaturesTerm, FeaturesBif = fingerprint_feature_extractor.extract_minutiae_features(img, spuriousMinutiaeThresh=10, invertImage = False, showResult=True, saveResult = True)
-#     json_string = fingerprint_feature_extractor.features_to_json(FeaturesTerm, FeaturesBif)
-#     print(json_string)
 if __name__ == '__main__':
     
     def process_image(path):
