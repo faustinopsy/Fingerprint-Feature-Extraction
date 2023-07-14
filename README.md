@@ -104,3 +104,99 @@ Para comparar duas imagens, você precisa enviar uma requisição POST para http
 curl -X POST -d "img1=$(base64 -w 0 image1.png)&img2=$(base64 -w 0 image2.png)" http://localhost:8000/compare
 ```
 Isso retornará a similaridade entre image1.png e image2.png.
+
+## Função PHP
+
+No metodo PHP abaixo, eu envio a imagem vinda do front-end onde faço a captura da digital, depois dentro do metodo realizo a leitura das imagens já salvas no banco de dados, e envio uma a uma dentro do loop junto com a primeira que é a base, e as demais vinda do banco, caso a porcentagem de similaridade esteja acima de 75% termina, aconselhavel enviar um outro argumento para que não percorra todas as imagens do banco.
+```shell
+    public function verify($image) {
+       
+        $imagesDb = $this->read(); ///imagens vinda do banco de dados, varias imagens
+        $result['status'] = false;
+
+            $base64_str = str_replace('data:image/png;base64,', '', $image);//imagem vinda do front-end
+            $bin = base64_decode($base64_str);
+            $size = getImageSizeFromString($bin);
+
+            if (empty($size['mime']) || strpos($size['mime'], 'image/') !== 0) {
+            die('Base64 value is not a valid image');
+            }
+            $ext = substr($size['mime'], 6);
+            if (!in_array($ext, ['png', 'gif', 'jpeg'])) {
+            die('Unsupported image type');
+            }
+            $img_login = "../../images/img_login.{$ext}";
+            $size_login = $size[0];
+            file_put_contents($img_login, $bin);
+            $imagem=json_decode(json_encode($image), true);
+            $soma=[];
+            $i=0;
+            foreach ($imagesDb as $users_file_b64) {
+                $id =intval($users_file_b64['user_id']);
+                $i++;
+                $obs =$users_file_b64['obs'];
+                $file_b64 =explode(',', $users_file_b64['bio']);
+                $file_b64 = $file_b64[1];
+                $bin2 = base64_decode($file_b64);
+                $size2 = getImageSizeFromString($bin2);
+                
+                $img_banco = "../../images/img_{$i}.png";
+                $size_banco = $size2[0];
+                file_put_contents($img_banco, $bin2);
+
+
+                $url = 'http://localhost:8000/compare';
+
+                // Define the image data
+                $post_data = http_build_query(array(
+                    'img1' => base64_encode(file_get_contents($img_login)),
+                    'img2' => base64_encode(file_get_contents($img_banco)),
+                ));
+
+                // Initialize a CURL session
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded',
+                'Content-Type: multipart/form-data'));
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+
+                // Execute the CURL session
+                $response = curl_exec($ch);
+
+                // Get the HTTP status code of the CURL session
+                $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                // Close the cURL session
+                curl_close($ch);
+
+                // Parse the response
+                $response_data = json_decode($response, true);
+
+                $best_ssim = $response_data['ssim'];
+
+                array_push($soma,$best_ssim);
+                if($best_ssim >= 75){
+                    $result['status'] = true;
+                    $result['message'] = $best_ssim;
+                    $result['imagem'] = $img_banco;
+                    $result['obs'] = $obs;
+                    echo json_encode($result);
+                    exit;
+                }  
+            }   
+            if(!empty($img_banc)){
+                unlink($img_banco);
+                unlink($img_login);
+            }
+            $result['status'] = false;
+            $result['message'] = 'Dados não conferem, tente novamente!';
+            $result['valores'] = $soma;
+            echo json_encode($result);
+            //imagedestroy($image1);
+            //imagedestroy($image2);
+            exit;
+         
+    }
+```
