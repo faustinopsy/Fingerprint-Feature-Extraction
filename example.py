@@ -14,7 +14,7 @@ if __name__ == '__main__':
     
     def process_image(path):
         img = cv2.imread(path, 0)				
-        FeaturesTerm, FeaturesBif = fingerprint_feature_extractor.extract_minutiae_features(img, spuriousMinutiaeThresh=10, invertImage = False, showResult=False, saveResult = True, crop_size=(350, 410))
+        FeaturesTerm, FeaturesBif = fingerprint_feature_extractor.extract_minutiae_features(img, spuriousMinutiaeThresh=10, invertImage = False, showResult=False, saveResult = True, crop_size=False)
         json_string = fingerprint_feature_extractor.features_to_json(FeaturesTerm, FeaturesBif)
         
         # Transforma o JSON string de volta em uma lista de dicionários
@@ -42,4 +42,4 @@ if __name__ == '__main__':
     # Agora você tem uma lista de matrizes de características que você pode comparar
     for i in range(1, len(feature_arrays)):
         distance = np.linalg.norm(feature_arrays[0] - feature_arrays[i])
-        print(f"Distância entre a imagem 1 e a imagem {i+1}: {distance}")
+        print(f"Distância entre a imagem 1 e a imagem {i+1}: {(distance//-100)+100}")
