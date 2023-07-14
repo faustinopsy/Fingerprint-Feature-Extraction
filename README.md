@@ -107,7 +107,7 @@ Isso retornará a similaridade entre image1.png e image2.png.
 
 ## Função PHP
 
-No metodo PHP abaixo, eu envio a imagem vinda do front-end onde faço a captura da digital, depois dentro do metodo realizo a leitura das imagens já salvas no banco de dados, e envio uma a uma dentro do loop junto com a primeira que é a base, e as demais vinda do banco, caso a porcentagem de similaridade esteja acima de 75% termina, aconselhavel enviar um outro argumento para que não percorra todas as imagens do banco.
+No metodo PHP abaixo, eu envio a imagem vinda do front-end onde faço a captura da digital, depois dentro do metodo realizo a leitura das imagens já salvas no banco de dados, e envio uma a uma dentro do loop junto com a primeira que é a base, e as demais vinda do banco, caso a porcentagem de similaridade esteja acima de 90% termina, aconselhavel enviar um outro argumento para que não percorra todas as imagens do banco.
 ```shell
     public function verify($image) {
        
@@ -177,7 +177,7 @@ No metodo PHP abaixo, eu envio a imagem vinda do front-end onde faço a captura 
                 $best_ssim = $response_data['ssim'];
 
                 array_push($soma,$best_ssim);
-                if($best_ssim >= 75){
+                if($best_ssim >= 90){
                     $result['status'] = true;
                     $result['message'] = $best_ssim;
                     $result['imagem'] = $img_banco;
