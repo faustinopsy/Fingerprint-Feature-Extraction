@@ -45,6 +45,11 @@ Here are some good ones:
 - "A MINUTIAE-BASED MATCHING ALGORITHMS IN FINGERPRINT RECOGNITION SYSTEMS" by Łukasz WIĘCŁAW
 http://www.keia.ath.bielsko.pl/sites/default/files/publikacje/11-BIO-41-lukaszWieclawMIT_v2_popr2.pdf
 
+
+# ATUALIZADO 
+
+Agora com o Flask, recebr duas imagens em base64 e compara a segunda com a primeira e devolve o resultado, essa atualização é para ser usada como serviço
+
 "A Minutiae-based Fingerprint Matching Algorithm Using Phase Correlation" by Weiping Chen and Yongsheng Gao
 https://core.ac.uk/download/pdf/143875633.pdf
 
