@@ -4,6 +4,28 @@ import skimage.morphology
 from skimage.morphology import convex_hull_image, erosion
 from skimage.morphology import square
 import math
+import json
+
+def features_to_json(FeaturesTerm, FeaturesBif):
+    all_features = FeaturesTerm + FeaturesBif
+    features_list = []
+
+    for feature in all_features:
+        feature_dict = {
+            'locX': int(feature.locX),
+            'locY': int(feature.locY),
+            'Orientation': [float(i) for i in feature.Orientation] if isinstance(feature.Orientation, list) else float(feature.Orientation),  # Se Orientation é uma lista
+            'Type': str(feature.Type)  # Agora Type é convertido para uma string
+        }
+        features_list.append(feature_dict)
+
+    return json.dumps(features_list)
+
+def center_crop(img, crop_height, crop_width):
+    height, width = img.shape[:2]
+    start_x = (width - crop_width) // 2
+    start_y = (height - crop_height) // 2
+    return img[start_y:start_y + crop_height, start_x:start_x + crop_width]
 
 class MinutiaeFeature(object):
     def __init__(self, locX, locY, Orientation, Type):
@@ -41,7 +63,7 @@ class FingerprintFeatureExtractor(object):
                         angle.append(-math.degrees(math.atan2(i - CenterY, j - CenterX)))
                         sumVal += 1
                         if (sumVal > 1):
-                            angle.append(float('nan'))
+                            angle.append(float(0))
             return (angle)
 
         elif (minutiaeType.lower() == 'bifurcation'):
@@ -55,7 +77,7 @@ class FingerprintFeatureExtractor(object):
                         angle.append(-math.degrees(math.atan2(i - CenterY, j - CenterX)))
                         sumVal += 1
             if (sumVal != 3):
-                angle.append(float('nan'))
+                angle.append(float(0))
             return (angle)
 
     def __getTerminationBifurcation(self):
@@ -164,7 +186,7 @@ class FingerprintFeatureExtractor(object):
         
         cv2.imshow('output', DispImg)
         cv2.waitKey(0)
-
+   
     def saveResult(self, FeaturesTerm, FeaturesBif):
         (rows, cols) = self._skel.shape
         DispImg = np.zeros((rows, cols, 3), np.uint8)
@@ -181,11 +203,16 @@ class FingerprintFeatureExtractor(object):
             row, col = curr_minutiae.locX, curr_minutiae.locY
             (rr, cc) = skimage.draw.circle_perimeter(row, col, 3)
             skimage.draw.set_color(DispImg, (rr, cc), (255, 0, 0))
-        cv2.imwrite('result.png', DispImg)
+        cv2.imwrite(f'{curr_minutiae.locX}.png', DispImg)
 
-def extract_minutiae_features(img, spuriousMinutiaeThresh=10, invertImage=False, showResult=False, saveResult=False):
+def extract_minutiae_features(img, spuriousMinutiaeThresh=10, invertImage=False, showResult=False, saveResult=False, crop_size=None):
     feature_extractor = FingerprintFeatureExtractor()
     feature_extractor.setSpuriousMinutiaeThresh(spuriousMinutiaeThresh)
+
+    if crop_size:
+        height, width = crop_size
+        img = center_crop(img, height, width)
+        
     if (invertImage):
         img = 255 - img;
 
