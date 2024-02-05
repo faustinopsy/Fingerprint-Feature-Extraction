@@ -1,3 +1,4 @@
+
 # FingerprintFeatureExtraction
 As características importantes das minúcias da impressão digital são os pontos finais das cristas (também conhecidas como terminações) e as bifurcações das cristas.
 
@@ -29,9 +30,7 @@ O conjunto de recursos para a imagem consiste na localização das terminações
 - numpy
 - math
 
-# Nota
-use o código https://github.com/Utkarsh-Deshmukh/Fingerprint-Enhancement-Python para melhorar a imagem da impressão digital.
-Este programa pega a imagem de impressão digital aprimorada e extrai os recursos minuciosos.
+
 
 Aqui estão algumas das saídas:
 
@@ -64,8 +63,8 @@ Este projeto se trata da extração de características de impressões digitais 
 
 1. Clone o repositório para o seu espaço de trabalho
     ```shell
-    git clone https://github.com/seu_usuario/seu_projeto.git
-    cd seu_projeto
+    git clone https://github.com/faustinopsy/Fingerprint-Feature-Extraction
+ cd Fingerprint-Feature-Extraction
     ```
 2. Crie um ambiente virtual (opcional, mas recomendado)
     ```shell
